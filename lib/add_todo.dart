@@ -32,8 +32,11 @@ class _AddTodoPageState extends State<AddTodoPage> {
               child: IconButton(
                 onPressed: () {
                   if (_formKey.currentState.validate()) {
-                    Navigator.of(context).pop(
-                        Todo(name: _nameController.text, priority: _priority));
+                    String name = _nameController.text;
+                    Navigator.of(context).pop(Todo(
+                        key: ValueKey(name),
+                        name: _nameController.text,
+                        priority: _priority));
                   }
                 },
                 icon: Icon(Icons.done),

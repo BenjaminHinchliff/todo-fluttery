@@ -34,6 +34,7 @@ class _TodoState extends State<Todo> {
   Widget build(BuildContext context) {
     return Card(
         child: ListTile(
+      key: widget.key,
       title: Text(widget.name),
       trailing: PopupMenuColorPanel(
         priority: priority,
