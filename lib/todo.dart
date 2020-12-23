@@ -8,7 +8,7 @@ enum TodoPriority {
   high,
 }
 
-class Todo extends StatelessWidget {
+class Todo extends StatefulWidget {
   Todo({Key key, @required this.name, @required this.priority})
       : assert(name != null),
         assert(priority != null),
@@ -17,17 +17,18 @@ class Todo extends StatelessWidget {
   final String name;
   final TodoPriority priority;
 
-  final Map<TodoPriority, Color> priorityColors = const {
-    TodoPriority.low: Colors.blue,
-    TodoPriority.medium: Colors.yellow,
-    TodoPriority.high: Colors.red,
-  };
+  @override
+  State<StatefulWidget> createState() => _TodoState();
+}
 
-  final Map<TodoPriority, String> priorityStrings = const {
-    TodoPriority.low: "Low",
-    TodoPriority.medium: "Medium",
-    TodoPriority.high: "High"
-  };
+class _TodoState extends State<Todo> {
+  TodoPriority priority;
+
+  @override
+  void initState() {
+    priority = widget.priority;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,22 +41,10 @@ class Todo extends StatelessWidget {
           children: [
             Expanded(
                 child: Text(
-              name,
+              widget.name,
               style: const TextStyle(fontSize: 20),
             )),
-            PopupMenuButton(
-              itemBuilder: (BuildContext context) => TodoPriority.values
-                  .map((e) => PopupMenuItem(
-                      value: e,
-                      child: Row(
-                        children: [
-                          Expanded(child: Text(priorityStrings[e])),
-                          ColorPanel(color: priorityColors[e])
-                        ],
-                      )))
-                  .toList(),
-              child: ColorPanel(color: priorityColors[priority]),
-            ),
+            PopupMenuColorPanel(priority: widget.priority),
           ],
         ),
       )),
