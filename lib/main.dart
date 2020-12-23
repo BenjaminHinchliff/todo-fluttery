@@ -60,13 +60,23 @@ class _HomePageState extends State<HomePage> {
         } else {
           return ReorderableListView(
             onReorder: (oldIndex, newIndex) {
-              print('$oldIndex, $newIndex');
               if (newIndex > oldIndex) {
                 newIndex -= 1;
               }
               _todos.insert(newIndex, _todos.removeAt(oldIndex));
             },
-            children: _todos,
+            children: [
+              for (final todo in _todos)
+                Dismissible(
+                  key: todo.key,
+                  child: todo,
+                  onDismissed: (direction) {
+                    setState(() {
+                      _todos.remove(todo);
+                    });
+                  },
+                )
+            ],
           );
         }
       })(),
