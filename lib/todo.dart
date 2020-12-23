@@ -32,29 +32,17 @@ class _TodoState extends State<Todo> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-        child: Container(
-      child: Card(
-          child: Container(
-        padding: EdgeInsets.all(15),
-        child: Row(
-          children: [
-            Expanded(
-                child: Text(
-              widget.name,
-              style: const TextStyle(fontSize: 20),
-            )),
-            PopupMenuColorPanel(
-              priority: priority,
-              onSelected: (value) {
-                setState(() {
-                  priority = value;
-                });
-              },
-            ),
-          ],
-        ),
-      )),
+    return Card(
+        child: ListTile(
+      title: Text(widget.name),
+      trailing: PopupMenuColorPanel(
+        priority: priority,
+        onSelected: (value) {
+          setState(() {
+            priority = value;
+          });
+        },
+      ),
     ));
   }
 }
