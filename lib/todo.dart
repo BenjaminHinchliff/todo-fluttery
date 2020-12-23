@@ -44,6 +44,7 @@ class _TodoState extends State<Todo> {
           });
         },
       ),
+      leading: Icon(Icons.unfold_more),
     ));
   }
 }
