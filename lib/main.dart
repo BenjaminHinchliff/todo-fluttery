@@ -107,9 +107,19 @@ class _HomePageState extends State<HomePage> {
         title: Text(widget.title),
         actions: [IconButton(icon: const Icon(Icons.list), onPressed: null)],
       ),
-      body: ListView(
-        children: _todos,
-      ),
+      body: (() {
+        if (_todos.isEmpty) {
+          return Center(
+              child: Text(
+            "No Todos Currently",
+            style: Theme.of(context).textTheme.bodyText1,
+          ));
+        } else {
+          return ListView(
+            children: _todos,
+          );
+        }
+      })(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           return Navigator.push(context, MaterialPageRoute(builder: (context) {
