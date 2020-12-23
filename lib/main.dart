@@ -58,7 +58,14 @@ class _HomePageState extends State<HomePage> {
             style: Theme.of(context).textTheme.bodyText1,
           ));
         } else {
-          return ListView(
+          return ReorderableListView(
+            onReorder: (oldIndex, newIndex) {
+              print('$oldIndex, $newIndex');
+              if (newIndex > oldIndex) {
+                newIndex -= 1;
+              }
+              _todos.insert(newIndex, _todos.removeAt(oldIndex));
+            },
             children: _todos,
           );
         }
