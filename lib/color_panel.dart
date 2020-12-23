@@ -36,9 +36,9 @@ class PopupMenuColorPanel extends StatelessWidget {
   };
 
   final Map<TodoPriority, String> priorityStrings = const {
-    TodoPriority.low: "Low",
-    TodoPriority.medium: "Medium",
-    TodoPriority.high: "High"
+    TodoPriority.low: 'Low',
+    TodoPriority.medium: 'Medium',
+    TodoPriority.high: 'High'
   };
 
   @override

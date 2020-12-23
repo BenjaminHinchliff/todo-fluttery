@@ -47,7 +47,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
               children: [
                 TextFormField(
                   decoration: const InputDecoration(
-                    hintText: "Add Name",
+                    hintText: 'Add Name',
                   ),
                   validator: (value) {
                     if (value.isEmpty) {

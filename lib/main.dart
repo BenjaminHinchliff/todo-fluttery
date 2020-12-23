@@ -54,7 +54,7 @@ class _HomePageState extends State<HomePage> {
         if (_todos.isEmpty) {
           return Center(
               child: Text(
-            "No Todos Currently",
+            'No Todos Currently',
             style: Theme.of(context).textTheme.bodyText1,
           ));
         } else {
