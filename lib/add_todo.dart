@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 import 'todo.dart';
+import 'color_panel.dart';
 
 class AddTodoPage extends StatefulWidget {
   AddTodoPage({Key key}) : super(key: key);
@@ -12,6 +14,7 @@ class AddTodoPage extends StatefulWidget {
 class _AddTodoPageState extends State<AddTodoPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
+  TodoPriority _priority = TodoPriority.low;
 
   @override
   void dispose() {
@@ -30,9 +33,8 @@ class _AddTodoPageState extends State<AddTodoPage> {
               child: IconButton(
                 onPressed: () {
                   if (_formKey.currentState.validate()) {
-                    Navigator.of(context).pop(Todo(
-                        name: _nameController.text,
-                        priority: TodoPriority.low));
+                    Navigator.of(context).pop(
+                        Todo(name: _nameController.text, priority: _priority));
                   }
                 },
                 icon: Icon(Icons.done),
@@ -43,20 +45,32 @@ class _AddTodoPageState extends State<AddTodoPage> {
         key: _formKey,
         child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 10),
-            child: Column(
+            child: Row(
               children: [
-                TextFormField(
-                  decoration: const InputDecoration(
-                    hintText: 'Add Name',
-                  ),
-                  validator: (value) {
-                    if (value.isEmpty) {
-                      return 'Please enter a name';
-                    }
-                    return null;
-                  },
-                  controller: _nameController,
+                Expanded(
+                  child: Padding(
+                      padding: EdgeInsets.only(right: 10),
+                      child: TextFormField(
+                        decoration: const InputDecoration(
+                          hintText: 'Add Name',
+                        ),
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return 'Please enter a name';
+                          }
+                          return null;
+                        },
+                        controller: _nameController,
+                      )),
                 ),
+                PopupMenuColorPanel(
+                  priority: _priority,
+                  onSelected: (value) {
+                    setState(() {
+                      _priority = value;
+                    });
+                  },
+                )
               ],
             )),
       ),
