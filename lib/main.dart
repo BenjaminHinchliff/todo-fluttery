@@ -69,6 +69,18 @@ class _HomePageState extends State<HomePage> {
               for (final todo in _todos)
                 Dismissible(
                   key: todo.key,
+                  background: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      color: Colors.red,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: List.filled(
+                            2,
+                            Icon(
+                              Icons.delete_forever,
+                              color: Colors.white,
+                            )),
+                      )),
                   child: todo,
                   onDismissed: (direction) {
                     setState(() {
