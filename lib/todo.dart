@@ -44,7 +44,14 @@ class _TodoState extends State<Todo> {
               widget.name,
               style: const TextStyle(fontSize: 20),
             )),
-            PopupMenuColorPanel(priority: widget.priority),
+            PopupMenuColorPanel(
+              priority: priority,
+              onSelected: (value) {
+                setState(() {
+                  priority = value;
+                });
+              },
+            ),
           ],
         ),
       )),

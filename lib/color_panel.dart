@@ -23,9 +23,11 @@ class ColorPanel extends StatelessWidget {
 }
 
 class PopupMenuColorPanel extends StatelessWidget {
-  PopupMenuColorPanel({Key key, this.priority}) : super(key: key);
+  PopupMenuColorPanel({Key key, this.priority, this.onSelected})
+      : super(key: key);
 
   final TodoPriority priority;
+  final Function(TodoPriority) onSelected;
 
   final Map<TodoPriority, Color> priorityColors = const {
     TodoPriority.low: Colors.blue,
@@ -52,6 +54,7 @@ class PopupMenuColorPanel extends StatelessWidget {
                 ],
               )))
           .toList(),
+      onSelected: onSelected,
       child: ColorPanel(color: priorityColors[priority]),
     );
   }
