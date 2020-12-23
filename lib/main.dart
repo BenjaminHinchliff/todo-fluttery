@@ -48,7 +48,6 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-        actions: [IconButton(icon: const Icon(Icons.list), onPressed: null)],
       ),
       body: (() {
         if (_todos.isEmpty) {
