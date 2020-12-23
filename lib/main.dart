@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 import 'todo.dart';
 
@@ -29,11 +30,11 @@ class AddTodoPage extends StatefulWidget {
 
 class _AddTodoPageState extends State<AddTodoPage> {
   final _formKey = GlobalKey<FormState>();
-  final nameController = TextEditingController();
+  final _nameController = TextEditingController();
 
   @override
   void dispose() {
-    nameController.dispose();
+    _nameController.dispose();
     super.dispose();
   }
 
@@ -45,22 +46,16 @@ class _AddTodoPageState extends State<AddTodoPage> {
         actions: [
           Padding(
               padding: EdgeInsets.only(right: 10, top: 10, bottom: 10),
-              child: ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                      (Set<MaterialState> states) {
-                        if (!states.contains(MaterialState.pressed))
-                          return Theme.of(context).colorScheme.primaryVariant;
-                        return null; // Use the component's default.
-                      },
-                    ),
-                  ),
-                  onPressed: () {
-                    if (_formKey.currentState.validate()) {
-                      print(nameController.text);
-                    }
-                  },
-                  child: Text("Add")))
+              child: IconButton(
+                onPressed: () {
+                  if (_formKey.currentState.validate()) {
+                    Navigator.of(context).pop(Todo(
+                        name: _nameController.text,
+                        priority: TodoPriority.low));
+                  }
+                },
+                icon: Icon(Icons.done),
+              ))
         ],
       ),
       body: Form(
@@ -79,7 +74,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
                     }
                     return null;
                   },
-                  controller: nameController,
+                  controller: _nameController,
                 ),
               ],
             )),
@@ -99,6 +94,16 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<Todo> _todos = [];
+
+  void _addTodo(BuildContext context) async {
+    final Todo todo = await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => AddTodoPage()));
+    if (todo != null) {
+      setState(() {
+        _todos.add(todo);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -122,9 +127,7 @@ class _HomePageState extends State<HomePage> {
       })(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          return Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return AddTodoPage();
-          }));
+          _addTodo(context);
         },
         tooltip: 'Increment',
         child: Icon(Icons.add),
