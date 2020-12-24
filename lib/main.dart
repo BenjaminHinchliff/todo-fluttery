@@ -57,19 +57,12 @@ class _HomePageState extends State<HomePage> {
     }, version: 1);
   }
 
-  void _printDatabase() async {
-    final db = await database;
-    final data = await db.query('todos');
-    final dataClasses = data.map((e) => TodoData.fromMap(e));
-    print(dataClasses);
-  }
-
   void _loadSavedTodos() async {
     final db = await database;
     final mapData = await db.query('todos');
-    final data = mapData.map((e) => Todo(data: TodoData.fromMap(e)));
 
     setState(() {
+      final data = mapData.map((e) => Todo(data: TodoData.fromMap(e)));
       _todos.addAll(data);
     });
   }
@@ -77,7 +70,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     database = _openDatabase();
-    _printDatabase();
     _loadSavedTodos();
     super.initState();
   }
@@ -98,10 +90,12 @@ class _HomePageState extends State<HomePage> {
         } else {
           return ReorderableListView(
             onReorder: (oldIndex, newIndex) {
-              if (newIndex > oldIndex) {
-                newIndex -= 1;
-              }
-              _todos.insert(newIndex, _todos.removeAt(oldIndex));
+              setState(() {
+                if (newIndex > oldIndex) {
+                  newIndex -= 1;
+                }
+                _todos.insert(newIndex, _todos.removeAt(oldIndex));
+              });
             },
             children: [
               for (final todo in _todos)
