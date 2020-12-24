@@ -36,24 +36,36 @@ class _HomePageState extends State<HomePage> {
   List<TodoData> _todos = [];
   Future<Database> database;
 
+  @override
+  void initState() {
+    database = _openDatabase();
+    _loadSavedTodos();
+    super.initState();
+  }
+
   void _addTodo(BuildContext context) async {
     final TodoData todo = await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => AddTodoPage(database: database)));
-    if (todo != null) {
-      setState(() {
+    setState(() {
+      if (todo != null) {
+        todo.position = _todos.length;
         _todos.add(todo);
-      });
-    }
+      }
+    });
   }
 
   Future<Database> _openDatabase() async {
     return openDatabase(
         path.join(await getDatabasesPath(), 'todos_database.db'),
         onCreate: (db, version) {
-      return db.execute(
-          "CREATE TABLE todos(id INTEGER PRIMARY KEY, name TEXT, priority INTEGER)");
+      return db.execute('''CREATE TABLE todos(
+            id INTEGER PRIMARY KEY,
+            position INTEGER,
+            name TEXT,
+            priority INTEGER
+          )''');
     }, version: 1);
   }
 
@@ -62,16 +74,16 @@ class _HomePageState extends State<HomePage> {
     final mapData = await db.query('todos');
 
     setState(() {
-      final data = mapData.map((e) => TodoData.fromMap(e));
+      final data = mapData.map((e) => TodoData.fromMap(e)).toList();
+      data.sort((a, b) => a.position.compareTo(b.position));
       _todos.addAll(data);
     });
   }
 
-  @override
-  void initState() {
-    database = _openDatabase();
-    _loadSavedTodos();
-    super.initState();
+  void _saveTodo(TodoData data) async {
+    final db = await database;
+    await db
+        .update('todos', data.toMap(), where: 'id = ?', whereArgs: [data.id]);
   }
 
   @override
@@ -94,17 +106,18 @@ class _HomePageState extends State<HomePage> {
                 if (newIndex > oldIndex) {
                   newIndex -= 1;
                 }
-                _todos.insert(newIndex, _todos.removeAt(oldIndex));
+                final item = _todos.removeAt(oldIndex);
+                _todos.insert(newIndex, item);
+                _todos[oldIndex].position = oldIndex;
+                _todos[newIndex].position = newIndex;
+                _saveTodo(item);
+                _saveTodo(_todos[oldIndex]);
               });
             },
             children: _todos.map((todoData) {
               final todo = Todo(
                 data: todoData,
-                onUpdate: (newData) async {
-                  final db = await database;
-                  await db.update('todos', newData.toMap(),
-                      where: 'id = ?', whereArgs: [newData.id]);
-                },
+                onUpdate: _saveTodo,
               );
               return Dismissible(
                 key: todo.key,
@@ -121,9 +134,13 @@ class _HomePageState extends State<HomePage> {
                           )),
                     )),
                 child: todo,
-                onDismissed: (direction) {
+                onDismissed: (direction) async {
+                  final db = await database;
+                  await db.delete('todos',
+                      where: 'id = ?', whereArgs: [todo.data.id]);
+
                   setState(() {
-                    _todos.remove(todo);
+                    _todos.remove(todo.data);
                   });
                 },
               );
