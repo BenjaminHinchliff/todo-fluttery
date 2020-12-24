@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as path;
+import 'package:sqflite/sqflite.dart';
 
 import 'todo.dart';
 import 'add_todo.dart';
@@ -32,15 +34,52 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<Todo> _todos = [];
+  Future<Database> database;
 
   void _addTodo(BuildContext context) async {
     final Todo todo = await Navigator.push(
-        context, MaterialPageRoute(builder: (context) => AddTodoPage()));
+        context,
+        MaterialPageRoute(
+            builder: (context) => AddTodoPage(database: database)));
     if (todo != null) {
       setState(() {
         _todos.add(todo);
       });
     }
+  }
+
+  Future<Database> _openDatabase() async {
+    return openDatabase(
+        path.join(await getDatabasesPath(), 'todos_database.db'),
+        onCreate: (db, version) {
+      return db.execute(
+          "CREATE TABLE todos(id INTEGER PRIMARY KEY, name TEXT, priority INTEGER)");
+    }, version: 1);
+  }
+
+  void _printDatabase() async {
+    final db = await database;
+    final data = await db.query('todos');
+    final dataClasses = data.map((e) => TodoData.fromMap(e));
+    print(dataClasses);
+  }
+
+  void _loadSavedTodos() async {
+    final db = await database;
+    final mapData = await db.query('todos');
+    final data = mapData.map((e) => Todo(data: TodoData.fromMap(e)));
+
+    setState(() {
+      _todos.addAll(data);
+    });
+  }
+
+  @override
+  void initState() {
+    database = _openDatabase();
+    _printDatabase();
+    _loadSavedTodos();
+    super.initState();
   }
 
   @override

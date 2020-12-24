@@ -8,25 +8,56 @@ enum TodoPriority {
   high,
 }
 
-class Todo extends StatefulWidget {
-  Todo({Key key, @required this.name, @required this.priority})
-      : assert(name != null),
-        assert(priority != null),
-        super(key: key);
-
+class TodoData {
+  int id;
   final String name;
-  final TodoPriority priority;
+  TodoPriority priority;
+
+  TodoData({this.id, @required this.name, @required this.priority})
+      : assert(name != null),
+        assert(priority != null);
+
+  Map<String, dynamic> toMap() {
+    var map = {
+      'name': name,
+      'priority': priority.index,
+    };
+    if (id != null) {
+      map['id'] = id;
+    }
+    return map;
+  }
+
+  String toString() {
+    return "{id: $id, name: $name, priority: $priority}";
+  }
+
+  static TodoData fromMap(Map<String, dynamic> map) {
+    return TodoData(
+      id: map['id'],
+      name: map['name'],
+      priority: TodoPriority.values[map['priority']],
+    );
+  }
+}
+
+class Todo extends StatefulWidget {
+  Todo({@required this.data})
+      : assert(data != null),
+        super(key: ValueKey(data.id));
+
+  final TodoData data;
 
   @override
   State<StatefulWidget> createState() => _TodoState();
 }
 
 class _TodoState extends State<Todo> {
-  TodoPriority priority;
+  TodoData data;
 
   @override
   void initState() {
-    priority = widget.priority;
+    data = widget.data;
     super.initState();
   }
 
@@ -35,12 +66,12 @@ class _TodoState extends State<Todo> {
     return Card(
         child: ListTile(
       key: widget.key,
-      title: Text(widget.name),
+      title: Text(data.name),
       trailing: PopupMenuColorPanel(
-        priority: priority,
+        priority: data.priority,
         onSelected: (value) {
           setState(() {
-            priority = value;
+            data.priority = value;
           });
         },
       ),
