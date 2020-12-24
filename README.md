@@ -1,16 +1,17 @@
-# todo
+# The Todo App I Always Wanted
 
-A new Flutter project.
+I've looked at quite a few apps that allow me to add a to-do list, but they always had features I thought were annoying, didn't use, or similar issues. So I decided to just make my own and that way I *have* to like it.
 
-## Getting Started
+Features:
+- Adding a todo
+- Deleting a todo (via swiping to the right or left)
+- Creating and changing the priority of a todo
+- Reordering of the list via dragging
+- A complete lack of time or date because I hate that
 
-This project is a starting point for a Flutter application.
+So, yeah. It's made with flutter, which is actually really great and made my life pretty easy.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Todos (ha ha joke):
+- [ ] Add tests
+- [ ] Put on Play Store
+- [ ] Put on App Store (if I can compile it which I might not be able to)
