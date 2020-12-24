@@ -33,11 +33,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<Todo> _todos = [];
+  List<TodoData> _todos = [];
   Future<Database> database;
 
   void _addTodo(BuildContext context) async {
-    final Todo todo = await Navigator.push(
+    final TodoData todo = await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => AddTodoPage(database: database)));
@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage> {
     final mapData = await db.query('todos');
 
     setState(() {
-      final data = mapData.map((e) => Todo(data: TodoData.fromMap(e)));
+      final data = mapData.map((e) => TodoData.fromMap(e));
       _todos.addAll(data);
     });
   }
@@ -97,30 +97,37 @@ class _HomePageState extends State<HomePage> {
                 _todos.insert(newIndex, _todos.removeAt(oldIndex));
               });
             },
-            children: [
-              for (final todo in _todos)
-                Dismissible(
-                  key: todo.key,
-                  background: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      color: Colors.red,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: List.filled(
-                            2,
-                            Icon(
-                              Icons.delete_forever,
-                              color: Colors.white,
-                            )),
-                      )),
-                  child: todo,
-                  onDismissed: (direction) {
-                    setState(() {
-                      _todos.remove(todo);
-                    });
-                  },
-                )
-            ],
+            children: _todos.map((todoData) {
+              final todo = Todo(
+                data: todoData,
+                onUpdate: (newData) async {
+                  final db = await database;
+                  await db.update('todos', newData.toMap(),
+                      where: 'id = ?', whereArgs: [newData.id]);
+                },
+              );
+              return Dismissible(
+                key: todo.key,
+                background: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    color: Colors.red,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: List.filled(
+                          2,
+                          Icon(
+                            Icons.delete_forever,
+                            color: Colors.white,
+                          )),
+                    )),
+                child: todo,
+                onDismissed: (direction) {
+                  setState(() {
+                    _todos.remove(todo);
+                  });
+                },
+              );
+            }).toList(),
           );
         }
       })(),

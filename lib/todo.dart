@@ -42,11 +42,12 @@ class TodoData {
 }
 
 class Todo extends StatefulWidget {
-  Todo({@required this.data})
+  Todo({@required this.data, this.onUpdate})
       : assert(data != null),
         super(key: ValueKey(data.id));
 
   final TodoData data;
+  final Function(TodoData) onUpdate;
 
   @override
   State<StatefulWidget> createState() => _TodoState();
@@ -61,6 +62,12 @@ class _TodoState extends State<Todo> {
     super.initState();
   }
 
+  _onUpdate() {
+    if (widget.onUpdate != null) {
+      widget.onUpdate(data);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -72,6 +79,7 @@ class _TodoState extends State<Todo> {
         onSelected: (value) {
           setState(() {
             data.priority = value;
+            _onUpdate();
           });
         },
       ),

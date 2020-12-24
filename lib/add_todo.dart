@@ -44,7 +44,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
                 var data =
                     TodoData(name: _nameController.text, priority: _priority);
                 data.id = await _insertTodo(data);
-                Navigator.of(context).pop(Todo(data: data));
+                Navigator.of(context).pop(data);
               }
             },
             icon: Icon(Icons.done),
