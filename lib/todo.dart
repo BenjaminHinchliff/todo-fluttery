@@ -8,12 +8,12 @@ enum TodoPriority {
   high,
 }
 
-class TodoData {
+class Todo {
   int id;
   final String name;
   TodoPriority priority;
 
-  TodoData({this.id, @required this.name, @required this.priority})
+  Todo({this.id, @required this.name, @required this.priority})
       : assert(name != null),
         assert(priority != null);
 
@@ -22,20 +22,20 @@ class TodoData {
   }
 }
 
-class Todo extends StatefulWidget {
-  Todo({@required this.data, this.onUpdate})
+class TodoView extends StatefulWidget {
+  TodoView({@required this.data, this.onUpdate})
       : assert(data != null),
         super(key: ValueKey(data.id));
 
-  final TodoData data;
-  final Function(TodoData) onUpdate;
+  final Todo data;
+  final Function(Todo) onUpdate;
 
   @override
-  State<StatefulWidget> createState() => _TodoState();
+  State<StatefulWidget> createState() => _TodoViewState();
 }
 
-class _TodoState extends State<Todo> {
-  TodoData data;
+class _TodoViewState extends State<TodoView> {
+  Todo data;
 
   @override
   void initState() {

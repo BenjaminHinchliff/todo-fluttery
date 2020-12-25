@@ -36,7 +36,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
             onPressed: () async {
               if (_formKey.currentState.validate()) {
                 var data =
-                    TodoData(name: _nameController.text, priority: _priority);
+                    Todo(name: _nameController.text, priority: _priority);
                 await widget.persister.add(data);
                 Navigator.of(context).pop();
               }

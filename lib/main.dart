@@ -77,7 +77,7 @@ class _HomePageState extends State<HomePage> {
               });
             },
             children: _persister.todos.map((todoData) {
-              final todo = Todo(
+              final todo = TodoView(
                 data: todoData,
                 onUpdate: _persister.updateTodoByValue,
               );

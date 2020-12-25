@@ -22,15 +22,15 @@ class TodoDataModel {
   TodoPriority priority;
   bool done;
 
-  TodoData toTodo() {
-    return TodoData(
+  Todo toTodo() {
+    return Todo(
       id: id,
       name: name,
       priority: priority,
     );
   }
 
-  static TodoDataModel fromTodo(TodoData todo, int position, bool done) {
+  static TodoDataModel fromTodo(Todo todo, int position, bool done) {
     return TodoDataModel(
       id: todo.id,
       name: todo.name,
@@ -68,7 +68,7 @@ class TodoPersister {
   static const databaseName = 'todos_database.db';
 
   sql.Database database;
-  List<TodoData> todos;
+  List<Todo> todos;
 
   TodoPersister();
 
@@ -79,7 +79,7 @@ class TodoPersister {
         .update('todos', model.toMap(), where: 'id = ?', whereArgs: [data.id]);
   }
 
-  Future<int> updateTodoByValue(TodoData value) {
+  Future<int> updateTodoByValue(Todo value) {
     return updateTodo(todos.indexOf(value));
   }
 
@@ -102,7 +102,7 @@ class TodoPersister {
     todos = todoModels.map((e) => e.toTodo()).toList();
   }
 
-  Future<bool> add(TodoData todo) async {
+  Future<bool> add(Todo todo) async {
     final todoModel = TodoDataModel.fromTodo(todo, todos.length, false);
     final id = await database.insert('todos', todoModel.toMap(),
         conflictAlgorithm: sql.ConflictAlgorithm.fail);
@@ -120,7 +120,7 @@ class TodoPersister {
     await Future.wait([updateTodo(startIndex), updateTodo(endIndex)]);
   }
 
-  Future<bool> delete(TodoData todo) async {
+  Future<bool> delete(Todo todo) async {
     final del =
         await database.delete('todos', where: 'id = ?', whereArgs: [todo.id]);
     todos.remove(todo);
