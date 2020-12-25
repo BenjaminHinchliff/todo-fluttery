@@ -1,4 +1,4 @@
-import 'package:Todo/todo.dart';
+import 'todo.dart';
 import 'package:path/path.dart' as path;
 import 'package:sqflite/sqflite.dart' as sql;
 

@@ -5,10 +5,10 @@ import 'add_todo.dart';
 import 'todo_perister.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(TodoApp());
 }
 
-class MyApp extends StatelessWidget {
+class TodoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
