@@ -10,38 +10,15 @@ enum TodoPriority {
 
 class TodoData {
   int id;
-  int position;
   final String name;
   TodoPriority priority;
 
-  TodoData(
-      {this.id, this.position, @required this.name, @required this.priority})
+  TodoData({this.id, @required this.name, @required this.priority})
       : assert(name != null),
         assert(priority != null);
 
-  Map<String, dynamic> toMap() {
-    var map = {
-      'position': position ?? 0,
-      'name': name,
-      'priority': priority.index,
-    };
-    if (id != null) {
-      map['id'] = id;
-    }
-    return map;
-  }
-
   String toString() {
-    return "{id: $id, position: $position, name: $name, priority: $priority}";
-  }
-
-  static TodoData fromMap(Map<String, dynamic> map) {
-    return TodoData(
-      id: map['id'],
-      position: map['position'],
-      name: map['name'],
-      priority: TodoPriority.values[map['priority']],
-    );
+    return "{id: $id, name: $name, priority: $priority}";
   }
 }
 
