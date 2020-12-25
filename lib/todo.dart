@@ -12,13 +12,19 @@ class Todo {
   int id;
   final String name;
   TodoPriority priority;
+  bool done;
 
-  Todo({this.id, @required this.name, @required this.priority})
+  Todo(
+      {this.id,
+      @required this.name,
+      @required this.priority,
+      @required this.done})
       : assert(name != null),
-        assert(priority != null);
+        assert(priority != null),
+        assert(done != null);
 
   String toString() {
-    return "{id: $id, name: $name, priority: $priority}";
+    return "{id: $id, name: $name, priority: $priority, done: $done}";
   }
 }
 

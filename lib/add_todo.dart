@@ -35,8 +35,10 @@ class _AddTodoPageState extends State<AddTodoPage> {
           IconButton(
             onPressed: () async {
               if (_formKey.currentState.validate()) {
-                var data =
-                    Todo(name: _nameController.text, priority: _priority);
+                var data = Todo(
+                    name: _nameController.text,
+                    priority: _priority,
+                    done: false);
                 await widget.persister.add(data);
                 Navigator.of(context).pop();
               }

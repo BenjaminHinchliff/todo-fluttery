@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'todo.dart';
 import 'add_todo.dart';
 import 'todo_perister.dart';
+import 'done_todos.dart';
+import 'slide_right_route.dart';
 
 void main() {
   runApp(TodoApp());
@@ -17,7 +19,7 @@ class TodoApp extends StatelessWidget {
         primarySwatch: Colors.orange,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: HomePage(title: 'Todo App'),
+      home: HomePage(title: 'Todos'),
     );
   }
 }
@@ -46,10 +48,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _addTodo(BuildContext context) async {
-    await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => AddTodoPage(persister: _persister)));
+    await Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => AddTodoPage(persister: _persister),
+    ));
     setState(() {});
   }
 
@@ -58,6 +59,12 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: [
+          IconButton(
+              icon: Icon(Icons.list),
+              onPressed: () => Navigator.of(context).push(SlideLeftRoute(
+                  builder: (context) => DoneTodosPage(persister: _persister))))
+        ],
       ),
       body: (() {
         if (_persister.todos?.isEmpty ?? true) {
@@ -76,10 +83,10 @@ class _HomePageState extends State<HomePage> {
                 _persister.move(oldIndex, newIndex);
               });
             },
-            children: _persister.todos.map((todoData) {
+            children: _persister.todos.where((e) => !e.done).map((todoData) {
               final todo = TodoView(
                 data: todoData,
-                onUpdate: _persister.updateTodoByValue,
+                onUpdate: _persister.updateTodo,
               );
               return Dismissible(
                 key: todo.key,
@@ -97,8 +104,12 @@ class _HomePageState extends State<HomePage> {
                   child: Icon(Icons.delete_forever, color: Colors.white),
                 ),
                 onDismissed: (direction) async {
-                  await _persister.delete(todo.data);
-
+                  if (direction == DismissDirection.startToEnd) {
+                    todo.data.done = true;
+                    await _persister.updateTodo(todo.data);
+                  } else {
+                    await _persister.delete(todo.data);
+                  }
                   setState(() {});
                 },
               );

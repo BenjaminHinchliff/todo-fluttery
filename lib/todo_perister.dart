@@ -23,20 +23,16 @@ class TodoDataModel {
   bool done;
 
   Todo toTodo() {
-    return Todo(
-      id: id,
-      name: name,
-      priority: priority,
-    );
+    return Todo(id: id, name: name, priority: priority, done: done);
   }
 
-  static TodoDataModel fromTodo(Todo todo, int position, bool done) {
+  static TodoDataModel fromTodo(Todo todo, int position) {
     return TodoDataModel(
       id: todo.id,
       name: todo.name,
       priority: todo.priority,
+      done: todo.done,
       position: position,
-      done: done,
     );
   }
 
@@ -72,15 +68,12 @@ class TodoPersister {
 
   TodoPersister();
 
-  Future<int> updateTodo(int index) {
-    var data = todos[index];
-    final model = TodoDataModel.fromTodo(data, index, false);
+  Future<int> updateTodo(Todo value) {
+    final index = todos.indexWhere((e) => e.id == value.id);
+    todos[index] = value;
+    final model = TodoDataModel.fromTodo(value, index);
     return database
-        .update('todos', model.toMap(), where: 'id = ?', whereArgs: [data.id]);
-  }
-
-  Future<int> updateTodoByValue(Todo value) {
-    return updateTodo(todos.indexOf(value));
+        .update('todos', model.toMap(), where: 'id = ?', whereArgs: [model.id]);
   }
 
   Future<void> openAndLoadDatabase() async {
@@ -103,7 +96,7 @@ class TodoPersister {
   }
 
   Future<bool> add(Todo todo) async {
-    final todoModel = TodoDataModel.fromTodo(todo, todos.length, false);
+    final todoModel = TodoDataModel.fromTodo(todo, todos.length);
     final id = await database.insert('todos', todoModel.toMap(),
         conflictAlgorithm: sql.ConflictAlgorithm.fail);
     if (id != -1) {
@@ -117,7 +110,8 @@ class TodoPersister {
 
   void move(int startIndex, int endIndex) async {
     todos.insert(endIndex, todos.removeAt(startIndex));
-    await Future.wait([updateTodo(startIndex), updateTodo(endIndex)]);
+    await Future.wait(
+        [updateTodo(todos[startIndex]), updateTodo(todos[endIndex])]);
   }
 
   Future<bool> delete(Todo todo) async {
