@@ -114,7 +114,7 @@ class TodoPersister {
         [updateTodo(todos[startIndex]), updateTodo(todos[endIndex])]);
   }
 
-  // TODO: address deletion position inaccuracies
+  // FIXME: address deletion position inaccuracies?
   Future<bool> delete(Todo todo) async {
     final del =
         await database.delete('todos', where: 'id = ?', whereArgs: [todo.id]);
