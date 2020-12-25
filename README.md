@@ -12,6 +12,7 @@ Features:
 So, yeah. It's made with flutter, which is actually really great and made my life pretty easy.
 
 Todos (ha ha joke):
+- [X] add system for completed tasks
 - [ ] Add tests
 - [ ] Put on Play Store
 - [ ] Put on App Store (if I can compile it which I might not be able to)
