@@ -83,19 +83,29 @@ class _HomePageState extends State<HomePage> {
               );
               return Dismissible(
                 key: todo.key,
+                child: todo,
                 background: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  color: Colors.green,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Icon(Icons.done, color: Colors.white),
+                    ],
+                  ),
+                ),
+                secondaryBackground: Container(
                     padding: EdgeInsets.symmetric(horizontal: 10),
                     color: Colors.red,
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: List.filled(
-                          2,
-                          Icon(
-                            Icons.delete_forever,
-                            color: Colors.white,
-                          )),
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Icon(
+                          Icons.delete_forever,
+                          color: Colors.white,
+                        )
+                      ],
                     )),
-                child: todo,
                 onDismissed: (direction) async {
                   await _persister.delete(todo.data);
 
