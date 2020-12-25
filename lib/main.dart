@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:todo/todos.dart';
 
 import 'todo.dart';
-import 'add_todo.dart';
+import 'add_todo_page.dart';
 import 'todo_perister.dart';
 import 'done_todos.dart';
 import 'slide_right_route.dart';
@@ -74,47 +75,25 @@ class _HomePageState extends State<HomePage> {
             style: Theme.of(context).textTheme.bodyText1,
           ));
         } else {
-          return ReorderableListView(
-            onReorder: (oldIndex, newIndex) {
-              setState(() {
-                if (newIndex > oldIndex) {
-                  newIndex -= 1;
-                }
-                _persister.move(oldIndex, newIndex);
-              });
-            },
-            children: _persister.todos.where((e) => !e.done).map((todoData) {
-              final todo = TodoView(
-                data: todoData,
-                onUpdate: _persister.updateTodo,
-              );
-              return Dismissible(
-                key: todo.key,
-                child: todo,
-                background: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  color: Colors.green,
-                  alignment: Alignment.centerLeft,
-                  child: Icon(Icons.done, color: Colors.white),
-                ),
-                secondaryBackground: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  color: Colors.red,
-                  alignment: Alignment.centerRight,
-                  child: Icon(Icons.delete_forever, color: Colors.white),
-                ),
-                onDismissed: (direction) async {
-                  if (direction == DismissDirection.startToEnd) {
-                    todo.data.done = true;
-                    await _persister.updateTodo(todo.data);
-                  } else {
-                    await _persister.delete(todo.data);
+          return TodosView(
+              persister: _persister,
+              onReorder: (oldIndex, newIndex) {
+                setState(() {
+                  if (newIndex > oldIndex) {
+                    newIndex -= 1;
                   }
-                  setState(() {});
-                },
-              );
-            }).toList(),
-          );
+                  _persister.move(oldIndex, newIndex);
+                });
+              },
+              onDismissed: (todo, direction) async {
+                if (direction == DismissDirection.startToEnd) {
+                  todo.done = true;
+                  await _persister.updateTodo(todo);
+                } else {
+                  await _persister.delete(todo);
+                }
+                setState(() {});
+              });
         }
       })(),
       floatingActionButton: FloatingActionButton(
