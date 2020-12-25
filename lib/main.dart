@@ -87,25 +87,15 @@ class _HomePageState extends State<HomePage> {
                 background: Container(
                   padding: EdgeInsets.symmetric(horizontal: 10),
                   color: Colors.green,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(Icons.done, color: Colors.white),
-                    ],
-                  ),
+                  alignment: Alignment.centerLeft,
+                  child: Icon(Icons.done, color: Colors.white),
                 ),
                 secondaryBackground: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    color: Colors.red,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Icon(
-                          Icons.delete_forever,
-                          color: Colors.white,
-                        )
-                      ],
-                    )),
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  color: Colors.red,
+                  alignment: Alignment.centerRight,
+                  child: Icon(Icons.delete_forever, color: Colors.white),
+                ),
                 onDismissed: (direction) async {
                   await _persister.delete(todo.data);
 
