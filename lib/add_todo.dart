@@ -3,13 +3,14 @@ import 'package:sqflite/sqflite.dart';
 
 import 'todo.dart';
 import 'color_panel.dart';
+import 'todo_perister.dart';
 
 class AddTodoPage extends StatefulWidget {
-  AddTodoPage({Key key, @required this.database})
-      : assert(database != null),
+  AddTodoPage({Key key, @required this.persister})
+      : assert(persister != null),
         super(key: key);
 
-  final Future<Database> database;
+  final TodoPersister persister;
 
   @override
   _AddTodoPageState createState() => _AddTodoPageState();
@@ -26,12 +27,6 @@ class _AddTodoPageState extends State<AddTodoPage> {
     super.dispose();
   }
 
-  Future<int> _insertTodo(TodoData todo) async {
-    final db = await widget.database;
-    return db.insert('todos', todo.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.fail);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,8 +38,8 @@ class _AddTodoPageState extends State<AddTodoPage> {
               if (_formKey.currentState.validate()) {
                 var data =
                     TodoData(name: _nameController.text, priority: _priority);
-                data.id = await _insertTodo(data);
-                Navigator.of(context).pop(data);
+                await widget.persister.add(data);
+                Navigator.of(context).pop();
               }
             },
             icon: Icon(Icons.done),

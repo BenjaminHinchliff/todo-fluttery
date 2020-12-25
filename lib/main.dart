@@ -4,6 +4,7 @@ import 'package:sqflite/sqflite.dart';
 
 import 'todo.dart';
 import 'add_todo.dart';
+import 'todo_perister.dart';
 
 void main() {
   runApp(MyApp());
@@ -33,57 +34,25 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<TodoData> _todos = [];
-  Future<Database> database;
+  TodoPersister _persister = TodoPersister();
 
   @override
   void initState() {
-    database = _openDatabase();
-    _loadSavedTodos();
+    asyncInit();
     super.initState();
   }
 
+  void asyncInit() async {
+    await _persister.openAndLoadDatabase();
+    setState(() {});
+  }
+
   void _addTodo(BuildContext context) async {
-    final TodoData todo = await Navigator.push(
+    await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => AddTodoPage(database: database)));
-    setState(() {
-      if (todo != null) {
-        todo.position = _todos.length;
-        _todos.add(todo);
-      }
-    });
-  }
-
-  Future<Database> _openDatabase() async {
-    return openDatabase(
-        path.join(await getDatabasesPath(), 'todos_database.db'),
-        onCreate: (db, version) {
-      return db.execute('''CREATE TABLE todos(
-            id INTEGER PRIMARY KEY,
-            position INTEGER,
-            name TEXT,
-            priority INTEGER
-          )''');
-    }, version: 1);
-  }
-
-  void _loadSavedTodos() async {
-    final db = await database;
-    final mapData = await db.query('todos');
-
-    setState(() {
-      final data = mapData.map((e) => TodoData.fromMap(e)).toList();
-      data.sort((a, b) => a.position.compareTo(b.position));
-      _todos.addAll(data);
-    });
-  }
-
-  void _saveTodo(TodoData data) async {
-    final db = await database;
-    await db
-        .update('todos', data.toMap(), where: 'id = ?', whereArgs: [data.id]);
+            builder: (context) => AddTodoPage(persister: _persister)));
+    setState(() {});
   }
 
   @override
@@ -93,7 +62,7 @@ class _HomePageState extends State<HomePage> {
         title: Text(widget.title),
       ),
       body: (() {
-        if (_todos.isEmpty) {
+        if (_persister.todos?.isEmpty ?? true) {
           return Center(
               child: Text(
             'No Todos Currently',
@@ -106,18 +75,13 @@ class _HomePageState extends State<HomePage> {
                 if (newIndex > oldIndex) {
                   newIndex -= 1;
                 }
-                final item = _todos.removeAt(oldIndex);
-                _todos.insert(newIndex, item);
-                _todos[oldIndex].position = oldIndex;
-                _todos[newIndex].position = newIndex;
-                _saveTodo(item);
-                _saveTodo(_todos[oldIndex]);
+                _persister.move(oldIndex, newIndex);
               });
             },
-            children: _todos.map((todoData) {
+            children: _persister.todos.map((todoData) {
               final todo = Todo(
                 data: todoData,
-                onUpdate: _saveTodo,
+                onUpdate: _persister.updateTodoByValue,
               );
               return Dismissible(
                 key: todo.key,
@@ -135,13 +99,9 @@ class _HomePageState extends State<HomePage> {
                     )),
                 child: todo,
                 onDismissed: (direction) async {
-                  final db = await database;
-                  await db.delete('todos',
-                      where: 'id = ?', whereArgs: [todo.data.id]);
+                  await _persister.delete(todo.data);
 
-                  setState(() {
-                    _todos.remove(todo.data);
-                  });
+                  setState(() {});
                 },
               );
             }).toList(),
