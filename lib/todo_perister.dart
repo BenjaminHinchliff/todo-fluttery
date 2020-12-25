@@ -1,5 +1,4 @@
 import 'package:Todo/todo.dart';
-import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
 import 'package:sqflite/sqflite.dart' as sql;
 
@@ -21,7 +20,7 @@ class TodoPersister {
   }
 
   Future<int> updateTodoByValue(TodoData value) {
-    updateTodo(todos.indexOf(value));
+    return updateTodo(todos.indexOf(value));
   }
 
   Future<void> openAndLoadDatabase() async {

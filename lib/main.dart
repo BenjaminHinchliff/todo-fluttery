@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:path/path.dart' as path;
-import 'package:sqflite/sqflite.dart';
 
 import 'todo.dart';
 import 'add_todo.dart';
